@@ -1,0 +1,35 @@
+.hero {
+  position: relative;
+}
+
+.imgContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 450px;
+  z-index: -1;
+  display: none;
+  transition: display 2s ease;
+}
+.imgContainer.active {
+  display: block;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.backdrop {
+  width: 100%;
+  height: 100%;
+  /* object-fit: fill; */
+}
+.hero_details {
+  position: absolute;
+  top: 300px;
+}

@@ -1,13 +1,58 @@
-body {
+:root {
+  /* --bg-color: 0 0% 100%;
+  --text-color: 0 0% 0%; */
+  --bg-color: 240 7% 5%;
+  --text-color: 0 0% 100%;
+  --btn-primary: 159 100% 29%;
+}
+* {
+  padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
+}
+body {
+  background-color: hsl(var(--bg-color));
+  color: hsl(var(--text-color));
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+a,
+button {
+  text-decoration: none;
+  color: hsl(var(--text-color));
+}
+ul {
+  list-style: none;
+}
+
+.btn {
+  padding: 10px;
+  font-size: 10px;
+  min-width: 100px;
+  max-width: 200px;
+  border-radius: 10px;
+}
+.btn_primary {
+  background-color: hsl(var(--btn-primary));
+}
+.btn_secondary {
+  background-color: transparent;
+  border: 2px solid hsl(var(--text-color));
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background: hsla(0, 0%, 0%, 0.5);
+
+  z-index: 10;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: 240 7% 5%;
+    --text-color: 0 0% 100%;
+  }
 }
