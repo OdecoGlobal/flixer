@@ -27,9 +27,6 @@ export default function Hero() {
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const handleReadMore = () => {
-    setVisibleText(true);
-  };
 
   const { moviesData, moviesLoading, error } = useMovie();
   useEffect(() => {
@@ -65,16 +62,6 @@ export default function Hero() {
     }
   }, [moviesLoading, latestMovies]);
 
-  {
-    /* {playVideo && (
-                <video width="560" height="315" controls>
-                  <source
-                    src={`https://www.youtube.com/watch?v=${playVideo.key}`}
-                    type="video/youtube"
-                  />
-                </video>
-              )} */
-  }
   // switch movie after 5 secs
   useEffect(() => {
     if (isMouseOver) {
@@ -89,9 +76,15 @@ export default function Hero() {
     return () => clearInterval(intervalId);
   }, [movies, moviesLoading, isMouseOver]);
 
+  // click functions
+  const handleReadMore = () => {
+    setVisibleText(true);
+  };
+
   const handleInteraction = () => {
     setIsMouseOver(true);
   };
+
   const handleLeave = () => {
     setIsMouseOver(false);
   };
