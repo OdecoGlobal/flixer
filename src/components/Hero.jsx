@@ -1,53 +1,62 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useFetch } from "../hooks/useFetch";
+import { useMovie } from "../hooks/useMovie";
+
+// styles
 import styles from "./Hero.module.css";
+// assets
+import Play from "../assets/play.svg";
+import Bookmark from "../assets/bookmark.svg";
+
+const maxWidth = () => {
+  return window.matchMedia("(min-width: 769px)").matches;
+};
+
+const maxScreen = maxWidth();
 
 const API_KEY = "70161bbcd895dec3c1b8d56d7c36b5fd";
+const BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
+
+// https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=70161bbcd895dec3c1b8d56d7c36b5fd
 
 export default function Hero() {
-  // const API_KEY = "70161bbcd895dec3c1b8d56d7c36b5fd";
+  const [visibleText, setVisibleText] = useState(false);
   const [latestMovies, setLatestMovie] = useState([]);
   const [movies, setMovie] = useState([]);
+  const [playVideo, setPlayVideo] = useState(null);
+  const [showTrailer, setShowTrailer] = useState(false);
+  const [isMouseOver, setIsMouseOver] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const currentYear = new Date().getFullYear();
-  const prevYear = currentYear - 1;
-  // console.log(currentYear, prevYear);
-  // const latestMovies = useRef(_latestMovies).current;
+  const handleReadMore = () => {
+    setVisibleText(true);
+  };
 
-  const {
-    data: moviesData,
-    isPending: moviesLoading,
-    error,
-  } = useFetch(
-    `https://api.themoviedb.org/3/discover/movie/?primary_release_date.gte=${prevYear}-01-01&primary_release_date.lte=${currentYear}-12-31&sort_by=popularity.desc&api_key=${API_KEY}`
-  );
+  const { moviesData, moviesLoading, error } = useMovie();
   useEffect(() => {
     if (!moviesLoading && moviesData) {
       const details = moviesData?.results
         .filter((movie) => movie.backdrop_path !== null)
-        .slice(0, 5);
+        .slice(0, 10);
       setLatestMovie(details);
     }
   }, [moviesLoading, moviesData]);
-  // console.log(latestMovies); &append_to_response=videos
+
   useEffect(() => {
     if (!moviesLoading && latestMovies) {
       const moviesId = latestMovies.map((movie) => movie.id);
 
       const fetchMovieData = async () => {
         try {
-          {
-            const moviePromise = moviesId?.map((id) =>
-              fetch(
-                `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&append_to_response=videos`
-              )
-            );
+          const moviePromise = moviesId?.map((id) =>
+            fetch(
+              `${BASE_MOVIE_URL}${id}?api_key=${API_KEY}&append_to_response=videos`
+            )
+          );
 
-            const movieDetails = await Promise.all(
-              moviePromise?.map((promise) => promise.then((res) => res.json()))
-            );
-            setMovie(movieDetails);
-          }
+          const movieDetails = await Promise.all(
+            moviePromise?.map((promise) => promise.then((res) => res.json()))
+          );
+          setMovie(movieDetails);
         } catch (err) {
           console.log(err.message);
         }
@@ -55,19 +64,52 @@ export default function Hero() {
       fetchMovieData();
     }
   }, [moviesLoading, latestMovies]);
-  // console.log(movies);
 
+  {
+    /* {playVideo && (
+                <video width="560" height="315" controls>
+                  <source
+                    src={`https://www.youtube.com/watch?v=${playVideo.key}`}
+                    type="video/youtube"
+                  />
+                </video>
+              )} */
+  }
+  // switch movie after 5 secs
   useEffect(() => {
-    if (!moviesLoading && movies.length > 0) {
-      const interval = setInterval(() => {
+    if (isMouseOver) {
+      clearInterval(intervalId);
+    }
+    if (!moviesLoading && movies.length > 0 && !isMouseOver) {
+      const carouselInterval = setInterval(() => {
         setCurrentIndex((prevImage) => (prevImage + 1) % movies?.length);
       }, 5000);
-      return () => clearInterval(interval);
+      setIntervalId(carouselInterval);
     }
-  }, [movies, moviesLoading]);
+    return () => clearInterval(intervalId);
+  }, [movies, moviesLoading, isMouseOver]);
+
+  const handleInteraction = () => {
+    setIsMouseOver(true);
+  };
+  const handleLeave = () => {
+    setIsMouseOver(false);
+  };
+
+  const handleTrailer = (trailerKey) => {
+    if (trailerKey) {
+      window.open(`https://www.youtube.com/watch?v=${trailerKey}`, "_blank");
+    }
+  };
 
   return (
-    <div className={styles.hero}>
+    <div
+      className={styles.hero}
+      onMouseEnter={handleInteraction}
+      onMouseLeave={handleLeave}
+      onTouchStart={handleInteraction}
+      onTouchEnd={handleLeave}
+    >
       {moviesLoading && <p>Loading</p>}
       {error && <p>{error}</p>}
       {movies &&
@@ -86,17 +128,53 @@ export default function Hero() {
               loading="lazy"
             />
             <div className={styles.hero_details}>
-              <h2>{mov.original_title}</h2>
-              <div>
+              <h2 className={styles.movie_title}>{mov.original_title}</h2>
+              <div className={styles.subdetails}>
                 <p>{`${Math.floor(mov.runtime / 60)}h${mov.runtime % 60}m`}</p>
-                {mov.genres.map((genre) => (
+                {mov.genres.slice(0, 3).map((genre) => (
                   <p key={genre.id}>{genre.name}</p>
                 ))}
               </div>
-              <p>{mov.overview}</p>
+              {maxScreen ? (
+                <p className={styles.overview}>{mov.overview}</p>
+              ) : (
+                <>
+                  <p>
+                    {visibleText ? (
+                      <p
+                        className={styles.overview}
+                        onClick={() => setVisibleText(false)}
+                      >
+                        {mov.overview}
+                      </p>
+                    ) : (
+                      <p className={styles.overview} onClick={handleReadMore}>
+                        {mov.overview.substring(0, 70)}
+                        <span>...Read More</span>
+                      </p>
+                    )}
+                  </p>
+                </>
+              )}
+
+              <div className={styles.trailer}>
+                <div
+                  className={`btn btn_primary`}
+                  onClick={() => handleTrailer(mov?.videos?.results[0]?.key)}
+                >
+                  <img src={Play} alt="watch" />
+                  <span>Watch Trailer</span>
+                </div>
+                <div className={`btn btn_secondary`}>
+                  <img src={Bookmark} alt="watch" />
+                  <span>Bookmark</span>
+                </div>
+              </div>
             </div>
           </div>
         ))}
     </div>
   );
 }
+
+/* <source src="={`https://www.youtube.com/embeded/${playMovie.trailerKey}`}" /> */

@@ -11,6 +11,18 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+*:focus,
+div:focus,
+a:focus,
+img:focus {
+  outline: none;
+  background-color: transparent;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 body {
   font-size: 1rem;
@@ -33,18 +45,16 @@ ul {
   cursor: pointer;
   padding: 10px;
   font-size: 10px;
-  min-width: 150px;
+  min-width: 120px;
   max-width: 200px;
   border-radius: 15px;
   font-size: 1.2em;
 }
-.btn_primary,
-.btn_secondary:hover {
+.btn_primary {
   background-color: hsl(var(--btn-primary));
   border: none;
 }
-.btn_secondary,
-.btn_primary:hover {
+.btn_secondary {
   background-color: transparent;
   border: 2px solid hsl(var(--text-color));
 }

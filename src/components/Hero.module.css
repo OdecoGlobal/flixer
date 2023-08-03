@@ -7,7 +7,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 450px;
+  height: 350px;
   z-index: -1;
   display: none;
   transition: display 2s ease;
@@ -27,9 +27,74 @@
 .backdrop {
   width: 100%;
   height: 100%;
-  /* object-fit: fill; */
 }
+
 .hero_details {
   position: absolute;
-  top: 300px;
+  top: 90px;
+  width: 350px;
+  height: 250px;
+  overflow-y: hidden;
+  padding-left: 20px;
+}
+.movie_title {
+  font-size: 1.2em;
+}
+.subdetails {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  font-size: 0.8em;
+  opacity: 75%;
+}
+.subdetails > * {
+  margin-right: 5px;
+}
+.overview {
+  overflow-y: auto;
+  padding: 5px 5px 5px 0;
+  font-size: 0.65em;
+  max-height: 120px;
+}
+.overview span {
+  color: #040438;
+}
+.trailer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+.trailer div {
+  margin-right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+}
+.trailer div img {
+  width: 20px;
+  filter: invert(100%);
+}
+
+@media screen and (min-width: 768px) {
+  .imgContainer {
+    height: 450px;
+  }
+  .hero_details {
+    width: 600px;
+    height: 350px;
+  }
+  .overview {
+    font-size: 1em;
+    max-height: 200px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .hero_details {
+    width: 750px;
+  }
+  .overview {
+    font-size: 1.3em;
+    max-height: 200px;
+  }
 }
