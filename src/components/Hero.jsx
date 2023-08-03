@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useMovie } from "../hooks/useMovie";
+import useMovieId from "../hooks/useMovieId";
 
 // styles
 import styles from "./Hero.module.css";
@@ -13,54 +13,15 @@ const maxWidth = () => {
 
 const maxScreen = maxWidth();
 
-const API_KEY = "70161bbcd895dec3c1b8d56d7c36b5fd";
-const BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
-
-// https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=70161bbcd895dec3c1b8d56d7c36b5fd
-
 export default function Hero() {
   const [visibleText, setVisibleText] = useState(false);
-  const [latestMovies, setLatestMovie] = useState([]);
-  const [movies, setMovie] = useState([]);
-  const [playVideo, setPlayVideo] = useState(null);
+  const [trrailerKey, setTrailerKey] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { moviesData, moviesLoading, error } = useMovie();
-  useEffect(() => {
-    if (!moviesLoading && moviesData) {
-      const details = moviesData?.results
-        .filter((movie) => movie.backdrop_path !== null)
-        .slice(0, 10);
-      setLatestMovie(details);
-    }
-  }, [moviesLoading, moviesData]);
-
-  useEffect(() => {
-    if (!moviesLoading && latestMovies) {
-      const moviesId = latestMovies.map((movie) => movie.id);
-
-      const fetchMovieData = async () => {
-        try {
-          const moviePromise = moviesId?.map((id) =>
-            fetch(
-              `${BASE_MOVIE_URL}${id}?api_key=${API_KEY}&append_to_response=videos`
-            )
-          );
-
-          const movieDetails = await Promise.all(
-            moviePromise?.map((promise) => promise.then((res) => res.json()))
-          );
-          setMovie(movieDetails);
-        } catch (err) {
-          console.log(err.message);
-        }
-      };
-      fetchMovieData();
-    }
-  }, [moviesLoading, latestMovies]);
+  const { moviesLoading, error, movies } = useMovieId();
 
   // switch movie after 5 secs
   useEffect(() => {
@@ -106,7 +67,7 @@ export default function Hero() {
       {moviesLoading && <p>Loading</p>}
       {error && <p>{error}</p>}
       {movies &&
-        movies.map((mov, i) => (
+        movies.slice(0, 10).map((mov, i) => (
           <div
             key={i}
             className={`${styles.imgContainer} ${

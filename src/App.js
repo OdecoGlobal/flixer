@@ -12,10 +12,14 @@ import Login from "./Pages/Login/Login";
 
 // styles
 import "./App.css";
+// const URL =
+//   "https://api.themoviedb.org/3/discover/tv?api_key=70161bbcd895dec3c1b8d56d7c36b5fd";
 
 // 70161bbcd895dec3c1b8d56d7c36b5fd
+// const URL =
+//   "https://api.themoviedb.org/3/movie/157336?api_key=70161bbcd895dec3c1b8d56d7c36b5fd&append_to_response=videos";
 const URL =
-  "https://api.themoviedb.org/3/movie/157336?api_key=70161bbcd895dec3c1b8d56d7c36b5fd&append_to_response=videos";
+  "https://api.themoviedb.org/3/tv/94722?api_key=70161bbcd895dec3c1b8d56d7c36b5fd&append_to_response=videos";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
