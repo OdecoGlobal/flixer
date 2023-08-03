@@ -1,7 +1,10 @@
 nav.navbar {
   max-width: 100vw;
+  overflow: hidden;
+  background-color: black;
+  max-width: 100vw;
   height: 100px;
-  padding: 20px 15px;
+  padding: 20px 30px 20px 30px;
   display: flex;
   flex: 1;
   justify-content: space-between;
@@ -9,18 +12,31 @@ nav.navbar {
   z-index: 15;
   position: relative;
 }
+/* .name {
+  margin-right: 20px;
+} */
+.navmenu {
+  max-width: 100vw;
+  border: 2px solid gold;
+  height: 100%;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+}
+
 .burger-menu {
+  margin-left: 20px;
   display: none;
   cursor: pointer;
-  z-index: 20;
+  z-index: 25;
 }
 .burger-menu img {
   width: 40px;
-  position: absolute;
-  top: 30px;
-  right: 30px;
   filter: invert(100%);
 }
+
 .menu-bar {
   position: fixed;
   top: 0;
@@ -28,8 +44,7 @@ nav.navbar {
   flex-direction: column;
   background-color: black;
   width: 80vw;
-  padding: 30% 0 0 30%;
-  font-size: 1.5em;
+  padding: 30% 0 0 20%;
   height: 200%;
   position: fixed;
   display: none;
@@ -37,18 +52,27 @@ nav.navbar {
 }
 .menu-bar.open {
   display: flex;
+  z-index: 20;
   animation: slide-nav-in 0.3s ease-in-out forwards;
 }
-.menu-bar > * {
-  margin-bottom: 50px;
-}
-.menu_item > * {
+
+.menu_item li {
   margin-bottom: 10px;
+  font-size: 1.2em;
 }
+.menu_icon {
+  display: flex;
+}
+.menu_icon img {
+  width: 30px;
+  filter: invert(100%);
+}
+
 .signin {
   display: flex;
   flex-direction: column;
 }
+
 .signin > * {
   margin-bottom: 20px;
 }
@@ -62,47 +86,59 @@ nav.navbar {
   }
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+}
+@media screen and (max-width: 1023px) {
   .burger-menu {
     display: block;
   }
 }
-@media screen and (min-width: 769px) {
+@media screen and (min-width: 1024px) {
+  .navmenu {
+    /* padding: 0 3em; */
+    position: static;
+  }
   .menu-bar {
     display: flex;
     margin-left: 20px;
     flex-direction: row;
-    padding: 0;
-    padding-top: 10px;
+    padding: 10px 0 0 20px;
+    padding-top: 0;
+    justify-content: space-between;
     position: static;
     transform: none;
     transition: none;
-    justify-content: space-between;
-    /* align-items: center; */
     height: 100%;
+    width: 100%;
     background: transparent;
-    background-color: rebeccapurple;
     display: flex;
   }
-  .menu-bar > * {
-    margin-bottom: 0;
+
+  .menu_icon {
+    /* position: absolute;
+    right: 30%; */
+    border: 2px solid red;
   }
+
   .menu_item {
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     display: flex;
+    /* order: ; */
   }
   .menu_item li {
-    margin-right: 20px;
+    margin-right: 50px;
+    margin-bottom: 0;
+  }
+  .signin {
+    flex-direction: row;
+    /* order: 4; */
   }
 
   .signin > *:last-child {
     margin-right: 0;
   }
 
-  .signin {
-    flex-direction: row;
-  }
   .signin > * {
     margin-right: 20px;
   }
