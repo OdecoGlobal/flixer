@@ -3,11 +3,15 @@ import { useEffect, useState } from "react";
 import { useSeriesSeason } from "../hooks/useSeriesSeason";
 
 export default function NewHero() {
-  const { newSeasons } = useSeriesSeason();
+  const { newSeasons, newEpisodes, isSeriesLoading, isEpisodeLoading } =
+    useSeriesSeason();
 
   useEffect(() => {
-    console.log(newSeasons, "nop");
-  }, [newSeasons]);
+    if (newEpisodes && newEpisodes) {
+      console.log(newSeasons, "nop");
+      console.log(newEpisodes, "001");
+    }
+  }, [newSeasons, newEpisodes]);
 }
 
 /*
