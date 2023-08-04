@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { useMovie } from "../hooks/useMovie";
+import { useEffect, useState } from "react";
 
-// styles
-import styles from "./Hero.module.css";
-// assets
-import Play from "../assets/play.svg";
-import Bookmark from "../assets/bookmark.svg";
-
-const maxWidth = () => {
-  return window.matchMedia("(min-width: 769px)").matches;
-};
-
-const maxScreen = maxWidth();
+import { useSeriesSeason } from "../hooks/useSeriesSeason";
 
 export default function NewHero() {
+  const { seasons } = useSeriesSeason();
+
+  //   useEffect(() => {
+  //     // console.log(seasons, "nop");
+  //   }, [seasons]);
+}
+
+/*
+
+// styles
+// import styles from "./Hero.module.css";
+// // assets
+// import Play from "../assets/play.svg";
+// import Bookmark from "../assets/bookmark.svg";
+
+// const maxWidth = () => {
+//   return window.matchMedia("(min-width: 769px)").matches;
+// };
+
+// const maxScreen = maxWidth();
   const [visibleText, setVisibleText] = useState(false);
   const [trrailerKey, setTrailerKey] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
@@ -21,7 +30,6 @@ export default function NewHero() {
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { media, mediaError: error, isLoading } = useMovie();
 
   // switch movie after 5 secs
   useEffect(() => {
@@ -128,5 +136,4 @@ export default function NewHero() {
           </div>
         ))}
     </div>
-  );
-}
+  );*/

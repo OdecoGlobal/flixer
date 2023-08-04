@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useFetch } from "./useFetch";
 
 const BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
@@ -6,7 +6,7 @@ const BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
 export function useMovie() {
   const API_KEY = "70161bbcd895dec3c1b8d56d7c36b5fd";
   const currentYear = new Date().getFullYear();
-  const prevYear = currentYear - 3;
+  const prevYear = currentYear - 10;
   const [latestMedia, setLatestMedia] = useState([]);
   const [allMedia, setAllMedia] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +26,7 @@ export function useMovie() {
     isPending: seriesLoading,
     seriesError,
   } = useFetch(
-    `https://api.themoviedb.org/3/discover/tv/?&include_video_language=en&sort_by=popularity.desc&api_key=${API_KEY}`
+    `https://api.themoviedb.org/3/discover/tv/?&include_video_language=en&first_air_date_year=2015&sort_by=popularity.desc&api_key=${API_KEY}`
   );
   // combining data
   useEffect(() => {
@@ -65,8 +65,6 @@ export function useMovie() {
     }
   }, [isLoading, allMedia]);
 
-  //  `${BASE_MOVIE_URL}${id}?api_key=${API_KEY}&append_to_response=videos`;
-
   //   getting id and movietype
   useEffect(() => {
     if (!isLoading && latestMedia) {
@@ -76,6 +74,7 @@ export function useMovie() {
       }));
 
       const fetchMovieData = async () => {
+        setIsLoading(true);
         try {
           const mediaPromise = mediaInfo?.map(({ id, type }) =>
             fetch(
@@ -90,6 +89,7 @@ export function useMovie() {
             ...data,
             media_type: latestMedia[i].media_type,
           }));
+          setIsLoading(false);
           setMedia(mediaDetailType);
         } catch (err) {
           console.log(err.message);
@@ -100,13 +100,9 @@ export function useMovie() {
   }, [moviesLoading, latestMedia]);
 
   return {
-    moviesData,
-    moviesLoading,
-    error,
     isLoading,
     mediaError,
     media,
-    latestMedia,
     API_KEY,
   };
 }
