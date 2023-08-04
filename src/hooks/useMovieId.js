@@ -7,8 +7,8 @@ export default function useMovieId() {
   const [latestMovies, setLatestMovie] = useState([]);
   const [movies, setMovie] = useState([]);
 
-  const { moviesData, latestMedia, moviesLoading, error, API_KEY } = useMovie();
-  console.log(latestMedia);
+  const { moviesData, media, moviesLoading, error, API_KEY } = useMovie();
+  console.log(media);
 
   useEffect(() => {
     if (!moviesLoading && moviesData) {

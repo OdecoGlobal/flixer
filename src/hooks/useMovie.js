@@ -70,34 +70,37 @@ export function useMovie() {
   //   getting id and movietype
   useEffect(() => {
     if (!isLoading && latestMedia) {
-      const mediaId = latestMovies.map((movie) => {
-        movie.id;
-      });
+      const mediaInfo = latestMedia.map((movie) => ({
+        id: movie.id,
+        type: movie.media_type,
+      }));
 
       const fetchMovieData = async () => {
         try {
-          const mediaPromise = mediaId?.map((id) =>
+          const mediaPromise = mediaInfo?.map(({ id, type }) =>
             fetch(
-              `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${API_KEY}&append_to_response=videos`
+              `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&append_to_response=videos`
             )
           );
 
-          const movieDetails = await Promise.all(
+          const mediaDetails = await Promise.all(
             mediaPromise?.map((promise) => promise.then((res) => res.json()))
           );
-          setMedia(movieDetails);
+          setMedia(mediaDetails);
         } catch (err) {
           console.log(err.message);
         }
       };
       fetchMovieData();
     }
-  }, [moviesLoading, latestMovies]);
+  }, [moviesLoading, latestMedia]);
 
   return {
     moviesData,
     moviesLoading,
     error,
+    mediaError,
+    media,
     latestMedia,
     API_KEY,
   };
