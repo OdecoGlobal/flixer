@@ -67,7 +67,7 @@ export default function Hero() {
       {moviesLoading && <p>Loading</p>}
       {error && <p>{error}</p>}
       {movies &&
-        movies.slice(0, 10).map((mov, i) => (
+        movies.map((mov, i) => (
           <div
             key={i}
             className={`${styles.imgContainer} ${

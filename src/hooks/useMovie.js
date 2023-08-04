@@ -26,7 +26,7 @@ export function useMovie() {
     isPending: seriesLoading,
     seriesError,
   } = useFetch(
-    `https://api.themoviedb.org/3/discover/tv/?primary_release_date.gte=${prevYear}-01-01&primary_release_date.lte=${currentYear}-12-31&sort_by=popularity.desc&api_key=${API_KEY}`
+    `https://api.themoviedb.org/3/discover/tv/?&include_video_language=en&sort_by=popularity.desc&api_key=${API_KEY}`
   );
   // combining data
   useEffect(() => {
