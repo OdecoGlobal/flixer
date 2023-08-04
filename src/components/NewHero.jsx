@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { useSeriesSeason } from "../hooks/useSeriesSeason";
 
 export default function NewHero() {
-  const { seasons } = useSeriesSeason();
+  const { newSeasons } = useSeriesSeason();
 
-  //   useEffect(() => {
-  //     // console.log(seasons, "nop");
-  //   }, [seasons]);
+  useEffect(() => {
+    console.log(newSeasons, "nop");
+  }, [newSeasons]);
 }
 
 /*
