@@ -4,8 +4,7 @@ import { useMovie } from "./useMovie";
 export function useSeriesSeason() {
   const [newSeasons, setNewSeasons] = useState([]);
   const [newEpisodes, setNewEpisodes] = useState([]);
-  const [seriesIdAndName, setSeriesIdAndName] = useState([]);
-  const [isLoading, setSeriesLoading] = useState(false);
+  const [isSeriesLoading, setSeriesLoading] = useState(false);
   const [isEpisodeLoading, setIsEpisodeLoading] = useState(false);
   const { media, mediaError: error, API_KEY } = useMovie();
 
@@ -31,15 +30,19 @@ export function useSeriesSeason() {
           const seasonDetails = await Promise.all(
             seasonPromise?.map((promise) => promise.then((res) => res.json()))
           );
+
+          const seasonWithSeriesId = seasonDetails.map((data, i) => ({
+            ...data,
+            series_id: seriesInfo[i].id,
+          }));
           setSeriesLoading(false);
-          setNewSeasons(seasonDetails);
+          setNewSeasons(seasonWithSeriesId);
         } catch (err) {
           setSeriesLoading(false);
           console.error(err);
         }
       };
       fetchSeries();
-      setSeriesIdAndName(seriesInfo);
     }
   }, [media, API_KEY]);
 
@@ -49,33 +52,34 @@ export function useSeriesSeason() {
     if (newSeasons) {
       const episodesInfo = newSeasons?.flatMap((season) =>
         season.episodes.map((episode) => ({
-          ...seriesIdAndName,
+          id: season.series_id,
+          season_number: season.season_number,
           episode_number: episode.episode_number,
         }))
       );
 
-      console.log(episodesInfo);
-      // const fetchEpisodes = async () => {
-      //   setIsEpisodeLoading(true);
-      //   try {
-      //     const episodePromises = episodesInfo?.map(
-      //       ({ id, season_number, episode_number }) =>
-      //         fetch(
-      //           `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}?api_key=${API_KEY}`
-      //         )
-      //     );
-      //     const episodeDetails = await Promise.all(
-      //       episodePromises?.map((promise) => promise.then((res) => res.json()))
-      //     );
-      //     setIsEpisodeLoading(false);
-      //     console.log(episodeDetails, "p");
-      //   } catch (err) {
-      //     console.error(err);
-      //   }
-      // };
-      // fetchEpisodes();
+      // console.log(episodesInfo);
+      const fetchEpisodes = async () => {
+        setIsEpisodeLoading(true);
+        try {
+          const episodePromises = episodesInfo?.map(
+            ({ id, season_number, episode_number }) =>
+              fetch(
+                `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}?language=en-US&api_key=${API_KEY}`
+              )
+          );
+          const episodeDetails = await Promise.all(
+            episodePromises?.map((promise) => promise.then((res) => res.json()))
+          );
+          setIsEpisodeLoading(false);
+          setNewEpisodes(episodeDetails);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchEpisodes();
     }
-  }, [newSeasons, API_KEY, seriesIdAndName]);
+  }, [newSeasons, API_KEY]);
 
-  return { newSeasons, newEpisodes, isLoading, error };
+  return { newSeasons, newEpisodes, isSeriesLoading, isEpisodeLoading, error };
 }
