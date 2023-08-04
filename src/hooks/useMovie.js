@@ -86,7 +86,11 @@ export function useMovie() {
           const mediaDetails = await Promise.all(
             mediaPromise?.map((promise) => promise.then((res) => res.json()))
           );
-          setMedia(mediaDetails);
+          const mediaDetailType = mediaDetails.map((data, i) => ({
+            ...data,
+            media_type: latestMedia[i].media_type,
+          }));
+          setMedia(mediaDetailType);
         } catch (err) {
           console.log(err.message);
         }
@@ -99,6 +103,7 @@ export function useMovie() {
     moviesData,
     moviesLoading,
     error,
+    isLoading,
     mediaError,
     media,
     latestMedia,
