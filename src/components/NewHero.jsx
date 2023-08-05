@@ -9,7 +9,7 @@ export default function NewHero() {
   useEffect(() => {
     if (newEpisodes && newEpisodes) {
       console.log(newSeasons, "nop");
-      console.log(newEpisodes, "001");
+      console.log(newEpisodes, "002");
     }
   }, [newSeasons, newEpisodes]);
 }

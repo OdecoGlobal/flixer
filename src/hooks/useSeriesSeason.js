@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMovie } from "./useMovie";
 export function useSeriesSeason() {
   const [newSeasons, setNewSeasons] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [newEpisodes, setNewEpisodes] = useState([]);
   const [isSeriesLoading, setSeriesLoading] = useState(false);
   const [isEpisodeLoading, setIsEpisodeLoading] = useState(false);
@@ -19,16 +20,17 @@ export function useSeriesSeason() {
         }))
       );
 
-      const fetchSeries = async () => {
+      const fetchSeries = async (page) => {
         setSeriesLoading(true);
         try {
           const seasonPromise = seriesInfo?.map(({ id, season_number }) =>
             fetch(
-              `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?api_key=${API_KEY}`
+              `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?api_key=${API_KEY}&page=${page}`
             )
           );
+          const seasonResponse = await Promise.all(seasonPromise);
           const seasonDetails = await Promise.all(
-            seasonPromise?.map((promise) => promise.then((res) => res.json()))
+            seasonResponse?.map((promise) => promise.then((res) => res.json()))
           );
 
           const seasonWithSeriesId = seasonDetails.map((data, i) => ({
@@ -36,13 +38,21 @@ export function useSeriesSeason() {
             series_id: seriesInfo[i].id,
           }));
           setSeriesLoading(false);
-          setNewSeasons(seasonWithSeriesId);
+          setNewSeasons((prevSeason) => [...prevSeason, seasonWithSeriesId]);
+          const totalPages =
+            seasonResponse.length > 0 ? seasonResponse[0].total_pages : 0;
+          if (page < totalPages) {
+            setCurrentPage(page + 1);
+            fetchSeries(page + 1);
+          }
         } catch (err) {
           setSeriesLoading(false);
           console.error(err);
         }
       };
-      fetchSeries();
+      setCurrentPage(1);
+      setNewSeasons([]);
+      fetchSeries(1);
     }
   }, [media, API_KEY]);
 
@@ -59,25 +69,34 @@ export function useSeriesSeason() {
       );
 
       // console.log(episodesInfo);
-      const fetchEpisodes = async () => {
+      const fetchEpisodes = async (page) => {
         setIsEpisodeLoading(true);
         try {
           const episodePromises = episodesInfo?.map(
             ({ id, season_number, episode_number }) =>
               fetch(
-                `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}?language=en-US&api_key=${API_KEY}`
+                `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}?language=en-US&api_key=${API_KEY}&page=${page}`
               )
           );
+          const episodeResponse = await Promise.all(episodePromises);
           const episodeDetails = await Promise.all(
-            episodePromises?.map((promise) => promise.then((res) => res.json()))
+            episodeResponse?.map((promise) => promise.then((res) => res.json()))
           );
           setIsEpisodeLoading(false);
-          setNewEpisodes(episodeDetails);
+          setNewEpisodes((prevEpisode) => [...prevEpisode, episodeDetails]);
+          const totalPages =
+            episodeResponse.length > 0 ? episodeResponse[0].total_pages : 0;
+          if (page < totalPages) {
+            setCurrentPage(page + 1);
+            fetchEpisodes(page + 1);
+          }
         } catch (err) {
           console.error(err);
         }
       };
-      fetchEpisodes();
+      setCurrentPage(1);
+      setNewEpisodes([]);
+      fetchEpisodes(1);
     }
   }, [newSeasons, API_KEY]);
 
