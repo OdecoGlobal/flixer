@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
-import { useMovieReducer } from "../hooks/useMovieReducer";
-// import { useMovie } from "../hooks/useMovie";
+import useSeriesReducer from "../hooks/useSeriesReducer";
 
 export default function NewHero() {
-  const { latestMedia, media } = useMovieReducer();
+  const { isSeriesLoading } = useSeriesReducer();
 
   useEffect(() => {
-    if (media) console.log(media);
+    console.log(2);
   }, []);
 }
 
