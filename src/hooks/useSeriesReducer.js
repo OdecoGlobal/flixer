@@ -18,6 +18,8 @@ const reducer = (state, action) => {
       return { ...state, isSeriesLoading: action.payload };
     case "SET_ERROR":
       return { ...state, seriesError: action.payload };
+    default:
+      return state;
   }
 };
 
@@ -28,7 +30,7 @@ export default function useSeriesReducer() {
   ///////////FETCHIND SEASONS
 
   useEffect(() => {
-    if (media) {
+    if (media && !isLoading) {
       const onlySeries = media?.filter((series) => series.media_type === "tv");
       const seriesInfo = onlySeries?.flatMap((serie) =>
         serie.seasons.map((season) => ({
@@ -52,9 +54,13 @@ export default function useSeriesReducer() {
               })
             )
           );
-          console.log(seasonDetails, "4");
+          console.warn(seasonDetails);
+          dispatch({ type: "SET_LOADING_STATE", payload: false });
+          dispatch({ type: "SET_NEW_SEASON", payload: seasonDetails });
+          dispatch({ type: "SET_ERROR", payload: null });
         } catch (err) {
-          console.log(err);
+          dispatch({ type: "SET_ERROR", payload: err });
+          dispatch({ type: "SET_LOADING_STATE", payload: false });
         }
       };
       fetchSeries();
@@ -63,66 +69,3 @@ export default function useSeriesReducer() {
 
   return state;
 }
-
-/*
-
-
-
-          const seasonDetails = await Promise.all(
-            seasonPromise?.map((promise) => promise.then((res) => res.json()))
-          );
-
-          const seasonWithSeriesId = seasonDetails.map((data, i) => ({
-            ...data,
-            series_id: seriesInfo[i].id,
-          }));
-          setSeriesLoading(false);
-          setNewSeasons(seasonWithSeriesId);
-        } catch (err) {
-          setSeriesLoading(false);
-          console.error(err);
-        }
-      };
-      fetchSeries();
-    }
-  }, [media, API_KEY]);
-
-  ///////////////////////////////EPISODES
-
-  useEffect(() => {
-    if (newSeasons) {
-      const episodesInfo = newSeasons?.flatMap((season) =>
-        season.episodes.map((episode) => ({
-          id: season.series_id,
-          season_number: season.season_number,
-          episode_number: episode.episode_number,
-        }))
-      );
-
-      // console.log(episodesInfo);
-      const fetchEpisodes = async () => {
-        setIsEpisodeLoading(true);
-        try {
-          const episodePromises = episodesInfo?.map(
-            ({ id, season_number, episode_number }) =>
-              fetch(
-                `https://api.themoviedb.org/3/tv/${id}/season/${season_number}/episode/${episode_number}?language=en-US&api_key=${API_KEY}`
-              )
-          );
-          const episodeDetails = await Promise.all(
-            episodePromises?.map((promise) => promise.then((res) => res.json()))
-          );
-          setIsEpisodeLoading(false);
-          setNewEpisodes(episodeDetails);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchEpisodes();
-    }
-  }, [newSeasons, API_KEY]);
-
-  return { newSeasons, newEpisodes, isSeriesLoading, isEpisodeLoading, error };
-}
-
- */

@@ -3,26 +3,30 @@ import { useEffect, useState } from "react";
 import useSeriesReducer from "../hooks/useSeriesReducer";
 
 export default function NewHero() {
-  const { isSeriesLoading } = useSeriesReducer();
+  const { isSeriesLoading, newSeason, seriesError } = useSeriesReducer();
 
   useEffect(() => {
-    console.log(2);
+    if (newSeason) console.log(newSeason, "0");
   }, []);
 }
 
 /*
+import React, { useEffect, useRef, useState } from "react";
+import useMovieId from "../hooks/useMovieId";
 
 // styles
-// import styles from "./Hero.module.css";
-// // assets
-// import Play from "../assets/play.svg";
-// import Bookmark from "../assets/bookmark.svg";
+import styles from "./Hero.module.css";
+// assets
+import Play from "../assets/play.svg";
+import Bookmark from "../assets/bookmark.svg";
 
-// const maxWidth = () => {
-//   return window.matchMedia("(min-width: 769px)").matches;
-// };
+const maxWidth = () => {
+  return window.matchMedia("(min-width: 769px)").matches;
+};
 
-// const maxScreen = maxWidth();
+const maxScreen = maxWidth();
+
+export default function Hero() {
   const [visibleText, setVisibleText] = useState(false);
   const [trrailerKey, setTrailerKey] = useState(null);
   const [showTrailer, setShowTrailer] = useState(false);
@@ -30,20 +34,21 @@ export default function NewHero() {
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const { moviesLoading, error, movies } = useMovieId();
 
   // switch movie after 5 secs
   useEffect(() => {
     if (isMouseOver) {
       clearInterval(intervalId);
     }
-    if (!isLoading && media.length > 0 && !isMouseOver) {
+    if (!moviesLoading && movies.length > 0 && !isMouseOver) {
       const carouselInterval = setInterval(() => {
-        setCurrentIndex((prevImage) => (prevImage + 1) % media?.length);
+        setCurrentIndex((prevImage) => (prevImage + 1) % movies?.length);
       }, 5000);
       setIntervalId(carouselInterval);
     }
     return () => clearInterval(intervalId);
-  }, [media, isLoading, isMouseOver]);
+  }, [movies, moviesLoading, isMouseOver]);
 
   // click functions
   const handleReadMore = () => {
@@ -72,10 +77,10 @@ export default function NewHero() {
       onTouchStart={handleInteraction}
       onTouchEnd={handleLeave}
     >
-      {isLoading && <p>Loading</p>}
+      {moviesLoading && <p>Loading</p>}
       {error && <p>{error}</p>}
-      {media &&
-        media.slice(0, 10).map((mov, i) => (
+      {movies &&
+        movies.map((mov, i) => (
           <div
             key={i}
             className={`${styles.imgContainer} ${
@@ -136,4 +141,7 @@ export default function NewHero() {
           </div>
         ))}
     </div>
-  );*/
+  );
+}
+
+/* <source src="={`https://www.youtube.com/embeded/${playMovie.trailerKey}`}" /> */
