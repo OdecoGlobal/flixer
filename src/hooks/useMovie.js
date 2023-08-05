@@ -72,7 +72,7 @@ export function useMovie() {
         id: movie.id,
         type: movie.media_type,
       }));
-
+      console.log(latestMedia, "0");
       const fetchMovieData = async () => {
         setIsLoading(true);
         try {

@@ -1,17 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { useSeriesSeason } from "../hooks/useSeriesSeason";
+import { useMovieReducer } from "../hooks/useMovieReducer";
+// import { useMovie } from "../hooks/useMovie";
 
 export default function NewHero() {
-  const { newSeasons, newEpisodes, isSeriesLoading, isEpisodeLoading } =
-    useSeriesSeason();
+  const { latestMedia, media } = useMovieReducer();
 
   useEffect(() => {
-    if (newEpisodes && newEpisodes) {
-      console.log(newSeasons, "nop");
-      // console.log(newEpisodes, "002");
-    }
-  }, [newSeasons, newEpisodes]);
+    if (media) console.log(media);
+  }, []);
 }
 
 /*
