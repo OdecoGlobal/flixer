@@ -93,7 +93,7 @@ export function useMovieReducer() {
   }, [state.allMedia]);
 
   useEffect(() => {
-    // const controller = new AbortController();
+    const controller = new AbortController();
     if (!state.isLoading && state.latestMedia) {
       const mediaInfo = state.latestMedia?.map((mov) => ({
         id: mov.id,
@@ -106,8 +106,8 @@ export function useMovieReducer() {
         try {
           const mediaPromise = mediaInfo.map(({ id, type }) =>
             fetch(
-              `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&append_to_response=videos`
-              //   { signal: controller.signal }
+              `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&append_to_response=videos`,
+              { signal: controller.signal }
             )
           );
           const mediaResponse = await Promise.all(
@@ -130,19 +130,26 @@ export function useMovieReducer() {
 
           dispatch({ type: "SET_MEDIA_ERROR", payload: null });
         } catch (err) {
-          dispatch({ type: "SET_LOADING", payload: false });
-          dispatch({
-            type: "SET_MEDIA_ERROR",
-            payload: err,
-          });
+          if (err.name === "AbortError") {
+            dispatch({
+              type: "SET_MEDIA_ERROR",
+              payload: "the fetch was aborted",
+            });
+          } else {
+            dispatch({ type: "SET_LOADING", payload: false });
+            dispatch({
+              type: "SET_MEDIA_ERROR",
+              payload: "Could not fetch the data",
+            });
+          }
 
           console.error(err);
         }
       };
       fetchMovieData();
-      //   return () => {
-      //     controller.abort();
-      //   };
+      return () => {
+        controller.abort();
+      };
     }
   }, [state.latestMedia]);
 

@@ -3,8 +3,8 @@ import { useMovieReducer } from "./useMovieReducer";
 const API_KEY = "70161bbcd895dec3c1b8d56d7c36b5fd";
 
 const initialState = {
+  series: [],
   newSeason: [],
-  newEpisodes: [],
   isSeriesLoading: false,
   seriesError: null,
 };
@@ -12,8 +12,8 @@ const reducer = (state, action) => {
   switch (action.type) {
     case "SET_NEW_SEASON":
       return { ...state, newSeason: action.payload };
-    case "SET_NEW_EPISODES":
-      return { ...state, newEpisodes: action.payload };
+    case "SET_SERIES":
+      return { ...state, series: action.payload };
     case "SET_LOADING_STATE":
       return { ...state, isSeriesLoading: action.payload };
     case "SET_ERROR":
@@ -24,14 +24,15 @@ const reducer = (state, action) => {
 };
 
 export default function useSeriesReducer() {
-  const { media, isLoading, mediaError } = useMovieReducer();
+  const { media, isLoading } = useMovieReducer();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  ///////////FETCHIND SEASONS
+  ///////////FETCHING SEASONS
 
   useEffect(() => {
     if (media && !isLoading) {
       const onlySeries = media?.filter((series) => series.media_type === "tv");
+      dispatch({ type: "SET_SERIES", payload: onlySeries });
       const seriesInfo = onlySeries?.flatMap((serie) =>
         serie.seasons.map((season) => ({
           id: serie.id,
@@ -43,7 +44,7 @@ export default function useSeriesReducer() {
         try {
           const seasonPromise = seriesInfo?.map(({ id, season_number }) =>
             fetch(
-              `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?api_key=${API_KEY}`
+              `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?append_to_response=videos&api_key=${API_KEY}`
             )
           );
           const seasonDetails = await Promise.all(
@@ -59,7 +60,7 @@ export default function useSeriesReducer() {
             series_id: seriesInfo[i].id,
           }));
 
-          ////////////////////////////////////
+          //////////////////////////////////// CREATIN AN ARRAY OF SEASONS AND ID AND NAME
           const newSeasonData = (() => {
             const newSeriesSeasonsMap = {};
             seasonWithSeriesId.forEach((season) => {
@@ -74,7 +75,7 @@ export default function useSeriesReducer() {
                 newSeriesSeasonsMap[name].push(season);
               }
             });
-            ///
+
             const newSeasonWithId = Object.keys(newSeriesSeasonsMap).map(
               (name) => ({
                 name,
@@ -87,12 +88,6 @@ export default function useSeriesReducer() {
 
             return newSeasonWithId;
           })();
-
-          console.log(newSeasonData, "aW");
-
-          /////////////////////////////////////////////
-
-          //   console.log(newSeriesSeasonsMap, "k");
 
           dispatch({ type: "SET_LOADING_STATE", payload: false });
           dispatch({ type: "SET_NEW_SEASON", payload: newSeasonData });
