@@ -54,9 +54,48 @@ export default function useSeriesReducer() {
               })
             )
           );
-          console.warn(seasonDetails);
+          const seasonWithSeriesId = seasonDetails.map((data, i) => ({
+            ...data,
+            series_id: seriesInfo[i].id,
+          }));
+
+          ////////////////////////////////////
+          const newSeasonData = (() => {
+            const newSeriesSeasonsMap = {};
+            seasonWithSeriesId.forEach((season) => {
+              const matchingSeries = onlySeries.find(
+                ({ id }) => id === season.series_id
+              );
+              if (matchingSeries) {
+                const { name } = matchingSeries;
+                if (!newSeriesSeasonsMap[name]) {
+                  newSeriesSeasonsMap[name] = [];
+                }
+                newSeriesSeasonsMap[name].push(season);
+              }
+            });
+            ///
+            const newSeasonWithId = Object.keys(newSeriesSeasonsMap).map(
+              (name) => ({
+                name,
+                seasons: newSeriesSeasonsMap[name],
+                id: onlySeries.find(
+                  ({ name: seriesName }) => seriesName === name
+                ).id,
+              })
+            );
+
+            return newSeasonWithId;
+          })();
+
+          console.log(newSeasonData, "aW");
+
+          /////////////////////////////////////////////
+
+          //   console.log(newSeriesSeasonsMap, "k");
+
           dispatch({ type: "SET_LOADING_STATE", payload: false });
-          dispatch({ type: "SET_NEW_SEASON", payload: seasonDetails });
+          dispatch({ type: "SET_NEW_SEASON", payload: newSeasonData });
           dispatch({ type: "SET_ERROR", payload: null });
         } catch (err) {
           dispatch({ type: "SET_ERROR", payload: err });
