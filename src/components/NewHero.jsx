@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { useMovie } from "../hooks/useMovie";
+import { useMovieReducer } from "../hooks/useMovieReducer";
 
 export default function NewHero() {
-  const { media, mediaInfo } = useMovie("2021", "2015", "2018", "");
+  const { media } = useMovieReducer();
 
   useEffect(() => {
     console.log(media, "ee");
-  }, [mediaInfo]);
+  }, [media]);
 }

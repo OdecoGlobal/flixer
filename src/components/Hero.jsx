@@ -6,6 +6,7 @@ import styles from "./Hero.module.css";
 // assets
 import Play from "../assets/play.svg";
 import Bookmark from "../assets/bookmark.svg";
+import { useMovieReducer } from "../hooks/useMovieReducer";
 
 const maxWidth = () => {
   return window.matchMedia("(min-width: 769px)").matches;
@@ -21,7 +22,12 @@ export default function Hero() {
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const { moviesLoading, error, movies } = useMovieId();
+  // const { moviesLoading, error, movies } = useMovieId();
+  const {
+    media: movies,
+    mediaError: error,
+    isLoading: moviesLoading,
+  } = useMovieReducer();
 
   // switch movie after 5 secs
   useEffect(() => {
