@@ -131,10 +131,7 @@ export function useMovieReducer() {
           dispatch({ type: "SET_MEDIA_ERROR", payload: null });
         } catch (err) {
           if (err.name === "AbortError") {
-            dispatch({
-              type: "SET_MEDIA_ERROR",
-              payload: "the fetch was aborted",
-            });
+            console.log("the fetch was aborted");
           } else {
             dispatch({ type: "SET_LOADING", payload: false });
             dispatch({

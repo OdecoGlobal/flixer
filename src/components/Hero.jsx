@@ -21,15 +21,16 @@ export default function Hero() {
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  // const { moviesLoading, error, movies } = useMovieId();
   const {
     media: movies,
-    mediaError: error,
+    mediaError,
     isLoading: moviesLoading,
   } = useMovieReducer();
 
-  // switch movie after 5 secs
+  useEffect(() => {
+    if (movies) console.log(movies);
+  }, [movies]);
+  // switch movie after 10 secs
   useEffect(() => {
     if (isMouseOver) {
       clearInterval(intervalId);
@@ -37,11 +38,17 @@ export default function Hero() {
     if (!moviesLoading && movies.length > 0 && !isMouseOver) {
       const carouselInterval = setInterval(() => {
         setCurrentIndex((prevImage) => (prevImage + 1) % movies?.length);
-      }, 5000);
+      }, 10000);
       setIntervalId(carouselInterval);
     }
     return () => clearInterval(intervalId);
   }, [movies, moviesLoading, isMouseOver]);
+
+  const formatRuntime = (runtime) => {
+    const hours = Math.floor(runtime / 60);
+    const mins = runtime % 60;
+    return `${hours}h${mins}m`;
+  };
 
   // click functions
   const handleReadMore = () => {
@@ -71,7 +78,7 @@ export default function Hero() {
       onTouchEnd={handleLeave}
     >
       {moviesLoading && <p>Loading</p>}
-      {error && <p>{error}</p>}
+      {mediaError && <p>{mediaError}</p>}
       {movies &&
         movies.map((mov, i) => (
           <div
@@ -88,9 +95,14 @@ export default function Hero() {
               loading="lazy"
             />
             <div className={styles.hero_details}>
-              <h2 className={styles.movie_title}>{mov.original_title}</h2>
+              <h2 className={styles.movie_title}>
+                {mov.media_type === "movie" ? mov.original_title : mov.name}
+              </h2>
+              <p className={styles.type}>
+                {mov.media_type === "movie" ? "Movie" : "Series"}
+              </p>
               <div className={styles.subdetails}>
-                <p>{`${Math.floor(mov.runtime / 60)}h${mov.runtime % 60}m`}</p>
+                <p>{formatRuntime(mov.runtime || mov.episode_run_time)}</p>
                 {mov.genres.slice(0, 3).map((genre) => (
                   <p key={genre.id}>{genre.name}</p>
                 ))}
