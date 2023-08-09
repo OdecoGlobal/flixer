@@ -1,15 +1,12 @@
-import { useEffect, useState } from "react";
-import { useMovieId } from "../hooks/useMovieId";
+import { useEffect, useState } from 'react';
+// import { useMovieId } from "../hooks/useMovieId";
+import { useMovie } from '../hooks/useMovie';
 
 export default function NewHero() {
-  const { data } = useMovieId(
-    "discover",
-    "primary_release_date.gte=2015-01-01&primary_release_date.lte=2015-12-31&sort_by=popularity.desc"
-  );
+  const { media } = useMovie(`&append_to_response=videos`);
   useEffect(() => {
-    if (data) console.log(data, "1");
-  }, [data]);
-
+    if (media) console.log(media, 'oo');
+  }, [media]);
   return <div>NewHero</div>;
 }
 
