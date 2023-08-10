@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import useMovieId from "../hooks/useMovieId";
+import React, { useEffect, useRef, useState } from 'react';
+import useMovieId from '../hooks/useMovieId';
 
 // styles
-import styles from "./Hero.module.css";
+import styles from './Hero.module.css';
 // assets
-import Play from "../assets/play.svg";
-import Bookmark from "../assets/bookmark.svg";
-import { useMovieReducer } from "../hooks/useMovieReducer";
+import Play from '../assets/play.svg';
+import Bookmark from '../assets/bookmark.svg';
+import { useMovieReducer } from '../hooks/useMovieReducer';
+import { useMovie } from '../hooks/useMovie';
 
 const maxWidth = () => {
-  return window.matchMedia("(min-width: 769px)").matches;
+  return window.matchMedia('(min-width: 769px)').matches;
 };
 
 const maxScreen = maxWidth();
@@ -21,12 +22,17 @@ export default function Hero() {
   const [isMouseOver, setIsMouseOver] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // const {
+  //   media: movies,
+  //   mediaError,
+  //   isLoading: moviesLoading,
+  // } = useMovieReducer();
+
   const {
     media: movies,
     mediaError,
-    isLoading: moviesLoading,
-  } = useMovieReducer();
-
+    mediaLoading: moviesLoading,
+  } = useMovie('');
   useEffect(() => {
     if (movies) console.log(movies);
   }, [movies]);
@@ -37,14 +43,14 @@ export default function Hero() {
     }
     if (!moviesLoading && movies.length > 0 && !isMouseOver) {
       const carouselInterval = setInterval(() => {
-        setCurrentIndex((prevImage) => (prevImage + 1) % movies?.length);
+        setCurrentIndex(prevImage => (prevImage + 1) % movies?.length);
       }, 10000);
       setIntervalId(carouselInterval);
     }
     return () => clearInterval(intervalId);
   }, [movies, moviesLoading, isMouseOver]);
 
-  const formatRuntime = (runtime) => {
+  const formatRuntime = runtime => {
     const hours = Math.floor(runtime / 60);
     const mins = runtime % 60;
     return `${hours}h${mins}m`;
@@ -63,9 +69,9 @@ export default function Hero() {
     setIsMouseOver(false);
   };
 
-  const handleTrailer = (trailerKey) => {
+  const handleTrailer = trailerKey => {
     if (trailerKey) {
-      window.open(`https://www.youtube.com/watch?v=${trailerKey}`, "_blank");
+      window.open(`https://www.youtube.com/watch?v=${trailerKey}`, '_blank');
     }
   };
 
@@ -84,7 +90,7 @@ export default function Hero() {
           <div
             key={i}
             className={`${styles.imgContainer} ${
-              i === currentIndex ? styles["active"] : ""
+              i === currentIndex ? styles['active'] : ''
             }`}
           >
             <div className={styles.overlay}></div>
@@ -96,14 +102,14 @@ export default function Hero() {
             />
             <div className={styles.hero_details}>
               <h2 className={styles.movie_title}>
-                {mov.media_type === "movie" ? mov.original_title : mov.name}
+                {mov.media_type === 'movie' ? mov.original_title : mov.name}
               </h2>
               <p className={styles.type}>
-                {mov.media_type === "movie" ? "Movie" : "Series"}
+                {mov.media_type === 'movie' ? 'Movie' : 'Series'}
               </p>
               <div className={styles.subdetails}>
                 <p>{formatRuntime(mov.runtime || mov.episode_run_time)}</p>
-                {mov.genres.slice(0, 3).map((genre) => (
+                {mov.genres.slice(0, 3).map(genre => (
                   <p key={genre.id}>{genre.name}</p>
                 ))}
               </div>

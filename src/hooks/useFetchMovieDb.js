@@ -50,5 +50,5 @@ export function useFetchMovieDb(endpoint, query) {
     };
   }, [endpoint]);
 
-  return { data, isLoading, error, API_KEY };
+  return { data, isLoading, error, API_KEY, types };
 }

@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react';
 import { useFetchMovieDb } from './useFetchMovieDb';
 
 export function useMovie(query) {
+  const currentYear = new Date().getFullYear();
+  const prevYear = currentYear - 4;
   const [media, setMedia] = useState([]);
   const [movie, setMovies] = useState([]);
   const [series, setSeries] = useState([]);
   const [mediaLoading, setMediaLoading] = useState(false);
   const [mediaError, setMediaError] = useState(null);
-  const { data, isLoading, API_KEY } = useFetchMovieDb('discover', '');
+  const { data, isLoading, API_KEY } = useFetchMovieDb(
+    'discover',
+    `&include_video_language=en&first_air_date_year=${prevYear}&primary_release_date.gte=${prevYear}-01-01&primary_release_date.lte=${currentYear}-12-31&sort_by=popularity.desc`
+  );
+
   useEffect(() => {
     if (!isLoading && data.length === 2) {
       const mediaBackdrop = data.map(mov =>
@@ -35,7 +41,7 @@ export function useMovie(query) {
       const fetchDetails = async () => {
         const urls = allId.map(
           ({ id, type }) =>
-            `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}${query}`
+            `https://api.themoviedb.org/3/${type}/${id}?api_key=${API_KEY}&append_to_response=videos${query}`
         );
 
         try {
@@ -70,10 +76,8 @@ export function useMovie(query) {
       const tvSeries = media.filter(med => med.media_type === 'tv');
       setSeries(tvSeries);
       setMovies(movies);
-      console.log(movie, '11');
-      console.log(series, '33');
     }
   }, [media]);
 
-  return { media, mediaError, mediaLoading };
+  return { media, mediaError, mediaLoading, series, movie };
 }
