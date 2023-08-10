@@ -1,9 +1,6 @@
 import { useEffect, useReducer } from 'react';
-import { useMovieReducer } from './useMovieReducer';
-const API_KEY = '70161bbcd895dec3c1b8d56d7c36b5fd';
-
+import { useMovie } from './useMovie';
 const initialState = {
-  series: [],
   newSeason: [],
   isSeriesLoading: false,
   seriesError: null,
@@ -12,8 +9,6 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'SET_NEW_SEASON':
       return { ...state, newSeason: action.payload };
-    case 'SET_SERIES':
-      return { ...state, series: action.payload };
     case 'SET_LOADING_STATE':
       return { ...state, isSeriesLoading: action.payload };
     case 'SET_ERROR':
@@ -22,23 +17,19 @@ const reducer = (state, action) => {
       return state;
   }
 };
-
-export function useSeriesReducer() {
-  const { media, isLoading } = useMovieReducer();
+export function useSeries() {
+  const { series, mediaLoading, API_KEY } = useMovie();
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  ///////////FETCHING SEASONS
-
   useEffect(() => {
-    if (media && !isLoading) {
-      const onlySeries = media?.filter(series => series.media_type === 'tv');
-      dispatch({ type: 'SET_SERIES', payload: onlySeries });
-      const seriesInfo = onlySeries?.flatMap(serie =>
+    if (series && !mediaLoading) {
+      const seriesInfo = series?.flatMap(serie =>
         serie.seasons.map(season => ({
           id: serie.id,
           season_number: season.season_number,
         }))
       );
+
       const fetchSeries = async () => {
         dispatch({ type: 'SET_LOADING_STATE', payload: true });
         try {
@@ -47,6 +38,7 @@ export function useSeriesReducer() {
               `https://api.themoviedb.org/3/tv/${id}/season/${season_number}?append_to_response=videos&api_key=${API_KEY}`
             )
           );
+
           const seasonDetails = await Promise.all(
             seasonPromise?.map(promise =>
               promise.then(res => {
@@ -55,7 +47,7 @@ export function useSeriesReducer() {
               })
             )
           );
-          const seasonWithSeriesId = seasonDetails.map((data, i) => ({
+          const seasonWithSeriesId = seasonDetails?.map((data, i) => ({
             ...data,
             series_id: seriesInfo[i].id,
           }));
@@ -64,7 +56,7 @@ export function useSeriesReducer() {
           const newSeasonData = (() => {
             const newSeriesSeasonsMap = {};
             seasonWithSeriesId.forEach(season => {
-              const matchingSeries = onlySeries.find(
+              const matchingSeries = series.find(
                 ({ id }) => id === season.series_id
               );
               if (matchingSeries) {
@@ -80,26 +72,25 @@ export function useSeriesReducer() {
               name => ({
                 name,
                 seasons: newSeriesSeasonsMap[name],
-                id: onlySeries.find(
-                  ({ name: seriesName }) => seriesName === name
-                ).id,
+                id: series.find(({ name: seriesName }) => seriesName === name)
+                  .id,
               })
             );
 
             return newSeasonWithId;
           })();
-
           dispatch({ type: 'SET_LOADING_STATE', payload: false });
           dispatch({ type: 'SET_NEW_SEASON', payload: newSeasonData });
           dispatch({ type: 'SET_ERROR', payload: null });
         } catch (err) {
           dispatch({ type: 'SET_ERROR', payload: err });
           dispatch({ type: 'SET_LOADING_STATE', payload: false });
+          console.log(err);
         }
       };
       fetchSeries();
     }
-  }, [media]);
+  }, [series]);
 
   return state;
 }

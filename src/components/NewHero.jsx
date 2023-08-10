@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { useMovie } from '../hooks/useMovie';
+import { useSeries } from '../hooks/useSeries';
 
 export default function NewHero() {
-  const { media } = useMovie(`&append_to_response=videos`);
+  const { newSeason } = useSeries();
 
   useEffect(() => {
-    if (media) console.log(media, 'orro');
-  }, [media]);
+    if (newSeason) console.log(newSeason, 'o');
+  }, [newSeason]);
   return <div>NewHero</div>;
 }

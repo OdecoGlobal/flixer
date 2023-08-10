@@ -79,5 +79,5 @@ export function useMovie(query) {
     }
   }, [media]);
 
-  return { media, mediaError, mediaLoading, series, movie };
+  return { media, mediaError, mediaLoading, series, movie, API_KEY };
 }

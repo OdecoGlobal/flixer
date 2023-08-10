@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import useMovieId from '../hooks/useMovieId';
 
 // styles
 import styles from './Hero.module.css';
 // assets
 import Play from '../assets/play.svg';
 import Bookmark from '../assets/bookmark.svg';
-import { useMovieReducer } from '../hooks/useMovieReducer';
 import { useMovie } from '../hooks/useMovie';
 
 const maxWidth = () => {
