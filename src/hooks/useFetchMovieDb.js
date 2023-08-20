@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 
 export function useFetchMovieDb(endpoint, query) {
-  const API_KEY = '70161bbcd895dec3c1b8d56d7c36b5fd';
+  // const API_KEY = '70161bbcd895dec3c1b8d56d7c36b5fd';
+  const API_KEY = process.env.REACT_APP_API_KEYS;
 
   const types = ['movie', 'tv'];
   const [isLoading, setIsLoading] = useState(false);
@@ -10,6 +11,7 @@ export function useFetchMovieDb(endpoint, query) {
 
   useEffect(() => {
     const controller = new AbortController();
+    console.log(API_KEY, '1');
 
     const movieCompany = async () => {
       setIsLoading(true);
@@ -48,7 +50,7 @@ export function useFetchMovieDb(endpoint, query) {
     return () => {
       controller.abort();
     };
-  }, [endpoint]);
+  }, [endpoint, API_KEY]);
 
   return { data, isLoading, error, API_KEY, types };
 }
